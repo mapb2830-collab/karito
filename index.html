@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para Karito ❤️</title>
+<style>
+  :root { color-scheme: light; box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: inherit; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: linear-gradient(160deg, #ffd1e3, #ff9ec4);
+    font-family: "Georgia", "Times New Roman", serif;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; touch-action: manipulation;
+    padding: env(safe-area-inset-top, 0px) 12px env(safe-area-inset-bottom, 0px);
+  }
+  .card {
+    position: relative; z-index: 2; text-align: center;
+    background: rgba(255,255,255,.85); border-radius: 24px;
+    padding: 28px 22px; max-width: 460px; width: 100%;
+    box-shadow: 0 10px 30px rgba(190,40,100,.25);
+  }
+  h1 { color: #c2185b; font-size: clamp(1.4rem, 5.5vw, 2rem); line-height: 1.3; margin: 0 0 24px; }
+  .buttons { display: flex; gap: 18px; justify-content: center; min-height: 56px; }
+  button {
+    font: inherit; font-size: 1.15rem; border: 0; border-radius: 999px;
+    padding: 12px 30px; cursor: pointer; color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2);
+  }
+  #yes { background: #e91e63; }
+  #no { background: #9e9e9e; transition: left .25s ease, top .25s ease; }
+  #no.run { position: fixed; z-index: 5; }
+  #thanks { display: none; color: #c2185b; font-size: clamp(1.6rem, 7vw, 2.4rem); margin: 0; }
+  .heart {
+    position: fixed; bottom: -40px; z-index: 1; pointer-events: none;
+    animation: rise linear forwards; opacity: .8;
+  }
+  @keyframes rise { to { transform: translateY(-115vh) rotate(25deg); opacity: 0; } }
+</style>
+</head>
+<body>
+<main class="card">
+  <h1 id="q">Karito, ¿podemos tener coito cuando el chamo no esté?</h1>
+  <div class="buttons" id="btns">
+    <button id="yes">Sí</button>
+    <button id="no">No</button>
+  </div>
+  <p id="thanks">Gracias, te amo mucho ❤️</p>
+</main>
+<script>
+  const yes = document.getElementById('yes'), no = document.getElementById('no');
+  const pad = 10;
+  function hit(a, b, m) {
+    return a.left < b.right + m && a.right > b.left - m && a.top < b.bottom + m && a.bottom > b.top - m;
+  }
+  function dodge(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const w = no.offsetWidth, h = no.offsetHeight;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const yr = yes.getBoundingClientRect();
+    const cur = no.getBoundingClientRect();
+    let x, y, ok = false;
+    for (let i = 0; i < 60 && !ok; i++) {
+      x = pad + Math.random() * (vw - w - pad * 2);
+      y = pad + Math.random() * (vh - h - pad * 2);
+      const r = { left: x, top: y, right: x + w, bottom: y + h };
+      ok = !hit(r, yr, 16) && Math.hypot(x - cur.left, y - cur.top) > 80;
+    }
+    if (!ok) { x = pad; y = pad; }
+    no.classList.add('run');
+    no.style.left = x + 'px';
+    no.style.top = y + 'px';
+  }
+  ['pointerenter', 'pointerdown', 'touchstart', 'click'].forEach(ev =>
+    no.addEventListener(ev, dodge, { passive: false }));
+  window.addEventListener('resize', () => {
+    if (no.classList.contains('run')) dodge();
+  });
+  yes.addEventListener('click', () => {
+    document.getElementById('btns').style.display = 'none';
+    no.style.display = 'none';
+    document.getElementById('q').style.display = 'none';
+    document.getElementById('thanks').style.display = 'block';
+    for (let i = 0; i < 25; i++) setTimeout(heart, i * 80);
+  });
+  function heart() {
+    const el = document.createElement('div');
+    el.className = 'heart';
+    el.textContent = ['❤️', '💖', '💕', '💗'][Math.floor(Math.random() * 4)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = 18 + Math.random() * 26 + 'px';
+    el.style.animationDuration = 5 + Math.random() * 5 + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 10500);
+  }
+  setInterval(heart, 600);
+</script>
+</body>
+</html>
